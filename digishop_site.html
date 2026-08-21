@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>DigiShop — Цифровые товары дёшево</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#06090F;--bg2:#0C1220;--bg3:#111B2E;
+  --acc:#00E5A0;--acc2:#00B8D9;--purple:#7B61FF;
+  --danger:#FF4D6A;--warn:#FFB547;
+  --text:#EEF2FF;--text2:#8899BB;--text3:#3D5070;
+  --border:rgba(255,255,255,0.07);
+  --r:14px;--r2:10px;--r3:7px;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;overflow-x:hidden}
+
+/* NAV */
+nav{
+  position:sticky;top:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 5%;height:60px;
+  background:rgba(6,9,15,0.92);backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.logo-icon{width:30px;height:30px;border-radius:8px;background:var(--purple);display:flex;align-items:center;justify-content:center;font-size:15px}
+.logo-text{font-size:17px;font-weight:800;color:var(--text)}
+.nav-cats{display:flex;gap:2px;overflow-x:auto}
+.nav-cats::-webkit-scrollbar{display:none}
+.nc{padding:6px 12px;border-radius:var(--r3);border:none;background:transparent;color:var(--text2);font-family:'Syne',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:.2s;white-space:nowrap}
+.nc:hover,.nc.active{background:var(--bg3);color:var(--text)}
+.cart-btn{
+  display:flex;align-items:center;gap:7px;padding:7px 16px;border-radius:var(--r3);
+  border:1px solid var(--border);background:transparent;color:var(--text);
+  font-family:'Syne',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:.2s;
+  position:relative;
+}
+.cart-btn:hover{border-color:var(--acc)}
+.cart-count{
+  position:absolute;top:-6px;right:-6px;width:18px;height:18px;border-radius:50%;
+  background:var(--acc);color:#000;font-size:10px;font-weight:800;
+  display:none;align-items:center;justify-content:center;
+}
+.cart-count.show{display:flex}
+
+/* HERO */
+.hero{
+  padding:60px 5% 40px;text-align:center;position:relative;overflow:hidden;
+}
+.hero::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 60% 50% at 50% 0%,rgba(123,97,255,0.1) 0%,transparent 60%);
+}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:8px;padding:5px 14px;
+  border-radius:20px;background:rgba(123,97,255,0.1);border:1px solid rgba(123,97,255,0.2);
+  font-size:11px;font-weight:700;color:var(--purple);margin-bottom:16px;
+}
+.hero h1{font-size:clamp(28px,5vw,52px);font-weight:800;letter-spacing:-1.5px;margin-bottom:12px;position:relative}
+.hero h1 .gr{background:linear-gradient(135deg,var(--purple),var(--acc2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero p{font-size:15px;color:var(--text2);max-width:480px;margin:0 auto 24px}
+.hero-stats{display:flex;gap:32px;justify-content:center;flex-wrap:wrap}
+.hs .num{font-size:20px;font-weight:800}
+.hs .lbl{font-size:10px;color:var(--text2);margin-top:2px;font-weight:600;letter-spacing:.5px}
+
+/* SEARCH */
+.search-wrap{padding:0 5% 20px}
+.search-box{
+  max-width:560px;margin:0 auto;
+  display:flex;align-items:center;gap:10px;
+  background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);
+  padding:10px 14px;
+}
+.search-box input{
+  background:none;border:none;outline:none;color:var(--text);
+  font-family:'Syne',sans-serif;font-size:14px;flex:1;
+}
+.search-box input::placeholder{color:var(--text3)}
+
+/* GRID */
+.catalog-wrap{padding:0 5% 60px}
+.cat-title{font-size:18px;font-weight:800;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin-bottom:32px}
+.product-card{
+  background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);
+  padding:18px;transition:.25s;position:relative;cursor:pointer;
+}
+.product-card:hover{border-color:var(--border2,rgba(255,255,255,0.12));transform:translateY(-3px)}
+.prod-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px}
+.prod-emoji{font-size:28px;line-height:1}
+.popular-tag{
+  padding:3px 8px;border-radius:5px;background:rgba(123,97,255,0.15);
+  color:var(--purple);font-size:9px;font-weight:800;letter-spacing:.5px;
+}
+.prod-name{font-size:15px;font-weight:800;margin-bottom:3px}
+.prod-period{font-size:11px;color:var(--text2);margin-bottom:10px;font-family:'JetBrains Mono',monospace}
+.prod-desc{font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:14px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.prod-footer{display:flex;align-items:center;justify-content:space-between}
+.prod-price-wrap{display:flex;flex-direction:column}
+.prod-old{font-size:11px;color:var(--text3);text-decoration:line-through;font-family:'JetBrains Mono',monospace}
+.prod-price{font-size:20px;font-weight:800;color:var(--text);font-family:'JetBrains Mono',monospace}
+.prod-discount{font-size:10px;color:var(--acc);font-weight:700}
+.add-btn{
+  padding:8px 16px;border-radius:var(--r3);border:1px solid var(--border);
+  background:transparent;color:var(--text);font-family:'Syne',sans-serif;
+  font-size:12px;font-weight:700;cursor:pointer;transition:.2s;
+}
+.add-btn:hover{background:var(--acc);color:#000;border-color:var(--acc)}
+.add-btn.added{background:rgba(0,229,160,0.1);color:var(--acc);border-color:rgba(0,229,160,0.3)}
+.stock-badge{
+  position:absolute;top:12px;right:12px;
+  padding:2px 7px;border-radius:5px;font-size:9px;font-weight:700;
+}
+.in-stock{background:rgba(0,229,160,0.1);color:var(--acc)}
+.no-stock{background:rgba(255,77,106,0.1);color:var(--danger)}
+
+/* CART SIDEBAR */
+.cart-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:200;
+  opacity:0;pointer-events:none;transition:.3s;
+}
+.cart-overlay.open{opacity:1;pointer-events:auto}
+.cart-panel{
+  position:absolute;right:0;top:0;bottom:0;width:380px;max-width:100%;
+  background:var(--bg2);border-left:1px solid var(--border);
+  display:flex;flex-direction:column;
+  transform:translateX(100%);transition:.35s cubic-bezier(.4,0,.2,1);
+}
+.cart-overlay.open .cart-panel{transform:translateX(0)}
+.cart-header{padding:20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.cart-header h3{font-size:18px;font-weight:800}
+.close-btn{background:none;border:none;color:var(--text2);font-size:22px;cursor:pointer;padding:4px}
+.cart-items{flex:1;overflow-y:auto;padding:16px}
+.cart-items::-webkit-scrollbar{width:3px}
+.cart-items::-webkit-scrollbar-thumb{background:var(--border)}
+.cart-item{
+  background:var(--bg3);border-radius:var(--r2);padding:12px;
+  display:flex;align-items:center;gap:10px;margin-bottom:8px;
+}
+.ci-emoji{font-size:22px;flex-shrink:0}
+.ci-info{flex:1}
+.ci-name{font-size:13px;font-weight:700}
+.ci-period{font-size:10px;color:var(--text2);margin-top:1px}
+.ci-price{font-size:14px;font-weight:800;color:var(--acc);font-family:'JetBrains Mono',monospace;flex-shrink:0}
+.ci-remove{background:none;border:none;color:var(--text3);font-size:16px;cursor:pointer;padding:2px;transition:.2s}
+.ci-remove:hover{color:var(--danger)}
+.cart-empty{text-align:center;padding:40px 20px;color:var(--text2)}
+.cart-empty-icon{font-size:40px;margin-bottom:12px}
+.cart-footer{padding:16px;border-top:1px solid var(--border)}
+.cart-total{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.ct-label{font-size:13px;color:var(--text2)}
+.ct-val{font-size:22px;font-weight:800;font-family:'JetBrains Mono',monospace}
+.checkout-btn{
+  width:100%;padding:14px;border-radius:var(--r2);border:none;
+  background:var(--acc);color:#000;font-family:'Syne',sans-serif;
+  font-size:15px;font-weight:800;cursor:pointer;transition:.2s;
+}
+.checkout-btn:hover{background:#00ffb3}
+.checkout-btn:disabled{background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.3);cursor:default}
+.tg-checkout{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  margin-top:8px;padding:10px;border-radius:var(--r2);border:1px solid var(--border);
+  background:transparent;color:var(--text);font-family:'Syne',sans-serif;
+  font-size:13px;font-weight:700;cursor:pointer;transition:.2s;width:100%;
+}
+.tg-checkout:hover{background:#2AABEE;color:#fff;border-color:#2AABEE}
+
+/* MODAL */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(8px);
+  z-index:300;display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:.3s;padding:16px;
+}
+.modal-overlay.open{opacity:1;pointer-events:auto}
+.modal{
+  background:var(--bg2);border:1px solid rgba(255,255,255,0.12);border-radius:var(--r);
+  padding:28px;max-width:460px;width:100%;position:relative;
+  transform:translateY(20px);transition:.3s;
+}
+.modal-overlay.open .modal{transform:translateY(0)}
+.modal-close{position:absolute;top:14px;right:14px;background:none;border:none;color:var(--text2);font-size:20px;cursor:pointer}
+.modal h3{font-size:18px;font-weight:800;margin-bottom:16px}
+.pay-methods{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+.pay-method{
+  display:flex;align-items:center;gap:12px;padding:13px 14px;
+  border-radius:var(--r2);border:1px solid var(--border);
+  cursor:pointer;transition:.2s;
+}
+.pay-method:hover{border-color:rgba(255,255,255,0.2)}
+.pay-method.selected{border-color:var(--acc);background:rgba(0,229,160,0.05)}
+.pm-icon{font-size:20px;width:28px;text-align:center}
+.pm-name{font-size:14px;font-weight:700;flex:1}
+.pm-desc{font-size:11px;color:var(--text2)}
+.pm-radio{width:18px;height:18px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;transition:.2s;display:flex;align-items:center;justify-content:center}
+.pay-method.selected .pm-radio{border-color:var(--acc);background:var(--acc)}
+.pay-method.selected .pm-radio::after{content:'';width:7px;height:7px;border-radius:50%;background:#000}
+.pay-btn{
+  width:100%;padding:14px;border-radius:var(--r2);border:none;
+  background:var(--acc);color:#000;font-family:'Syne',sans-serif;
+  font-size:15px;font-weight:800;cursor:pointer;transition:.2s;
+}
+.pay-btn:hover{background:#00ffb3}
+.pay-note{text-align:center;font-size:11px;color:var(--text3);margin-top:8px}
+
+/* PRODUCT MODAL */
+.prod-modal-body{display:flex;gap:16px;flex-direction:column}
+.prod-modal-header{display:flex;gap:14px;align-items:flex-start}
+.pm-emoji{font-size:40px}
+.pm-details .pm-title{font-size:20px;font-weight:800;margin-bottom:4px}
+.pm-details .pm-period{font-size:12px;color:var(--text2);font-family:'JetBrains Mono',monospace}
+.pm-prices{display:flex;align-items:baseline;gap:10px;margin-top:8px}
+.pm-new-price{font-size:28px;font-weight:800;font-family:'JetBrains Mono',monospace}
+.pm-old-price{font-size:14px;color:var(--text3);text-decoration:line-through;font-family:'JetBrains Mono',monospace}
+.pm-save{font-size:12px;color:var(--acc);font-weight:700}
+.pm-desc-full{font-size:13px;color:var(--text2);line-height:1.7;background:var(--bg3);border-radius:var(--r3);padding:12px}
+.delivery-badge{
+  display:inline-flex;align-items:center;gap:6px;padding:5px 12px;
+  border-radius:8px;font-size:12px;font-weight:700;
+  background:rgba(0,229,160,0.1);color:var(--acc);
+}
+.pm-actions{display:flex;gap:8px}
+.pm-cart-btn{
+  flex:1;padding:13px;border-radius:var(--r2);border:1px solid var(--border);
+  background:transparent;color:var(--text);font-family:'Syne',sans-serif;
+  font-size:14px;font-weight:700;cursor:pointer;transition:.2s;
+}
+.pm-cart-btn:hover{border-color:var(--acc);color:var(--acc)}
+.pm-buy-btn{
+  flex:1;padding:13px;border-radius:var(--r2);border:none;
+  background:var(--acc);color:#000;font-family:'Syne',sans-serif;
+  font-size:14px;font-weight:800;cursor:pointer;transition:.2s;
+}
+.pm-buy-btn:hover{background:#00ffb3}
+
+/* TOAST */
+.toast{
+  position:fixed;bottom:20px;right:20px;z-index:500;
+  background:var(--bg3);border:1px solid rgba(255,255,255,0.12);border-radius:var(--r2);
+  padding:12px 16px;display:flex;align-items:center;gap:10px;
+  font-size:13px;font-weight:600;max-width:280px;
+  transform:translateY(60px);opacity:0;transition:.4s cubic-bezier(.34,1.56,.64,1);
+}
+.toast.show{transform:translateY(0);opacity:1}
+.td{width:8px;height:8px;border-radius:50%;background:var(--acc);flex-shrink:0}
+
+/* FOOTER */
+footer{background:var(--bg2);border-top:1px solid var(--border);padding:32px 5%;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+footer p{font-size:12px;color:var(--text3)}
+.footer-tg{display:flex;align-items:center;gap:8px;color:var(--text2);text-decoration:none;font-size:13px;font-weight:600}
+
+@media(max-width:600px){
+  .nav-cats{display:none}
+  .cart-panel{width:100%}
+  .prod-modal-header{flex-direction:column}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="logo" href="#">
+    <div class="logo-icon">🛍</div>
+    <div class="logo-text">DigiShop</div>
+  </a>
+  <div class="nav-cats" id="navCats"></div>
+  <button class="cart-btn" onclick="openCart()">
+    🛒 Корзина
+    <div class="cart-count" id="cartCount">0</div>
+  </button>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">⚡ Мгновенная доставка · Лучшие цены</div>
+  <h1>Цифровые товары<br><span class="gr">за копейки</span></h1>
+  <p>ChatGPT Plus, Claude Pro, Apple ID, Steam, Spotify и ещё 25+ товаров. Оплата рублями, криптой и Stars.</p>
+  <div class="hero-stats">
+    <div class="hs"><div class="num">25+</div><div class="lbl">ТОВАРОВ</div></div>
+    <div class="hs"><div class="num">⚡ 30мин</div><div class="lbl">ДОСТАВКА</div></div>
+    <div class="hs"><div class="num">−50%</div><div class="lbl">СКИДКА</div></div>
+    <div class="hs"><div class="num">24/7</div><div class="lbl">ПОДДЕРЖКА</div></div>
+  </div>
+</div>
+
+<!-- SEARCH -->
+<div class="search-wrap">
+  <div class="search-box">
+    <span style="font-size:14px;color:var(--text3)">🔍</span>
+    <input placeholder="Поиск товаров..." id="searchInput" oninput="filterProducts()">
+  </div>
+</div>
+
+<!-- CATALOG -->
+<div class="catalog-wrap" id="catalogWrap"></div>
+
+<!-- FOOTER -->
+<footer>
+  <p>© 2025 DigiShop · Цифровые товары · Мгновенная доставка</p>
+  <a class="footer-tg" href="https://t.me/DigiShopBot">✈️ Telegram-бот</a>
+</footer>
+
+<!-- CART SIDEBAR -->
+<div class="cart-overlay" id="cartOverlay" onclick="handleCartClick(event)">
+  <div class="cart-panel">
+    <div class="cart-header">
+      <h3>🛒 Корзина</h3>
+      <button class="close-btn" onclick="closeCart()">✕</button>
+    </div>
+    <div class="cart-items" id="cartItems"></div>
+    <div class="cart-footer">
+      <div class="cart-total">
+        <span class="ct-label">Итого:</span>
+        <span class="ct-val" id="cartTotal">0₽</span>
+      </div>
+      <button class="checkout-btn" id="checkoutBtn" onclick="openPayModal()" disabled>Выбрать способ оплаты</button>
+      <button class="tg-checkout" onclick="openTG()">✈️ Купить через Telegram-бот</button>
+    </div>
+  </div>
+</div>
+
+<!-- PRODUCT MODAL -->
+<div class="modal-overlay" id="prodModal" onclick="closeProdModalOutside(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="closeProdModal()">✕</button>
+    <div id="prodModalContent"></div>
+  </div>
+</div>
+
+<!-- PAY MODAL -->
+<div class="modal-overlay" id="payModal" onclick="closePayModalOutside(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="closePayModal()">✕</button>
+    <h3>💳 Способ оплаты</h3>
+    <div class="pay-methods" id="payMethods"></div>
+    <button class="pay-btn" onclick="handlePay()">Оплатить <span id="payTotal">0₽</span></button>
+    <div class="pay-note">🔒 Безопасная оплата · Гарантия возврата 24ч</div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"><div class="td"></div><div id="toastMsg"></div></div>
+
+<script>
+const CATS = {
+  ai:     {name:"🤖 AI Подписки",  emoji:"🤖"},
+  apple:  {name:"🍎 Apple",         emoji:"🍎"},
+  steam:  {name:"🎮 Steam/Игры",   emoji:"🎮"},
+  social: {name:"📱 Стриминг",      emoji:"📱"},
+};
+
+const PRODUCTS = [
+  {id:"chatgpt_plus",em:"🤖",name:"ChatGPT Plus",cat:"ai",period:"1 месяц",price:890,old:1600,desc:"GPT-4o + o1 + DALL·E 3. Общий аккаунт с личным чатом.",delivery:"🔑 Аккаунт",popular:true},
+  {id:"claude_pro",em:"⚡",name:"Claude Pro",cat:"ai",period:"1 месяц",price:890,old:1800,desc:"Claude 3.5 Sonnet + Opus + Projects. Общий аккаунт.",delivery:"🔑 Аккаунт",popular:false},
+  {id:"chatgpt_3m",em:"🤖",name:"ChatGPT Plus",cat:"ai",period:"3 месяца",price:2390,old:4800,desc:"GPT-4o + o1. Экономия 34%. Общий аккаунт.",delivery:"🔑 Аккаунт",popular:false},
+  {id:"midjourney_std",em:"🎨",name:"Midjourney Standard",cat:"ai",period:"1 месяц",price:1190,old:2200,desc:"Безлимит Relax + 15ч Fast генерации. Личный Discord.",delivery:"🔑 Аккаунт",popular:true},
+  {id:"midjourney_basic",em:"🎨",name:"Midjourney Basic",cat:"ai",period:"1 месяц",price:690,old:1100,desc:"200 генераций в месяц. Discord аккаунт.",delivery:"🔑 Аккаунт",popular:false},
+  {id:"perplexity",em:"🔍",name:"Perplexity Pro",cat:"ai",period:"1 месяц",price:590,old:1800,desc:"AI поиск + GPT-4 + Claude. Общий аккаунт.",delivery:"🔑 Аккаунт",popular:false},
+  {id:"copilot",em:"💻",name:"GitHub Copilot Pro",cat:"ai",period:"1 месяц",price:490,old:900,desc:"AI в VS Code, JetBrains. Личный аккаунт.",delivery:"🗝 Ключ",popular:false},
+  {id:"suno",em:"🎵",name:"Suno Pro",cat:"ai",period:"1 месяц",price:490,old:900,desc:"2500 кредитов на генерацию музыки.",delivery:"🔑 Аккаунт",popular:false},
+  {id:"grok",em:"🚀",name:"Grok Premium+",cat:"ai",period:"1 месяц",price:690,old:1400,desc:"xAI Grok 2 + генерация картинок.",delivery:"🔑 Аккаунт",popular:false},
+
+  {id:"apple_id_us",em:"🍎",name:"Apple ID (США)",cat:"apple",period:"навсегда",price:290,old:500,desc:"Готовый Apple ID US. App Store США — тысячи эксклюзивных приложений.",delivery:"🗝 Ключ",popular:true},
+  {id:"apple_id_tr",em:"🍎",name:"Apple ID (Турция)",cat:"apple",period:"навсегда",price:199,old:350,desc:"Apple ID Турция. Дешёвые подписки и приложения.",delivery:"🗝 Ключ",popular:false},
+  {id:"icloud_50",em:"☁️",name:"iCloud+ 50 GB",cat:"apple",period:"1 месяц",price:99,old:199,desc:"50 ГБ для фото и бэкапов. Семейный план.",delivery:"📋 Инструкция",popular:false},
+  {id:"apple_music",em:"🎵",name:"Apple Music",cat:"apple",period:"1 месяц",price:149,old:299,desc:"100 млн треков без рекламы. Семейный аккаунт.",delivery:"📋 Инструкция",popular:false},
+  {id:"apple_tv",em:"📺",name:"Apple TV+",cat:"apple",period:"1 месяц",price:149,old:299,desc:"Оригинальные сериалы Apple. Семейный план.",delivery:"📋 Инструкция",popular:false},
+
+  {id:"steam_500",em:"💰",name:"Steam Wallet 500₽",cat:"steam",period:"разово",price:530,old:600,desc:"Пополнение Steam-кошелька на 500 рублей. Ключ активации.",delivery:"🗝 Ключ",popular:true},
+  {id:"steam_1000",em:"💰",name:"Steam Wallet 1000₽",cat:"steam",period:"разово",price:1040,old:1150,desc:"Пополнение Steam на 1000 рублей.",delivery:"🗝 Ключ",popular:false},
+  {id:"steam_100",em:"💰",name:"Steam Wallet 100₽",cat:"steam",period:"разово",price:110,old:130,desc:"Пополнение Steam на 100 рублей.",delivery:"🗝 Ключ",popular:false},
+  {id:"gamepass",em:"🕹",name:"Xbox Game Pass Ultimate",cat:"steam",period:"1 месяц",price:390,old:699,desc:"400+ игр + EA Play + Cloud Gaming. Турецкий регион.",delivery:"📋 Инструкция",popular:true},
+  {id:"psplus",em:"🎮",name:"PS Plus Essential",cat:"steam",period:"1 месяц",price:390,old:699,desc:"Онлайн + 2 игры в месяц. Турецкий регион.",delivery:"🗝 Ключ",popular:false},
+
+  {id:"spotify",em:"🎧",name:"Spotify Premium",cat:"social",period:"1 месяц",price:149,old:299,desc:"Музыка без рекламы, оффлайн. Семейный план.",delivery:"📋 Инструкция",popular:true},
+  {id:"youtube",em:"📹",name:"YouTube Premium",cat:"social",period:"1 месяц",price:199,old:379,desc:"YouTube без рекламы + Music + фоновое воспр.",delivery:"📋 Инструкция",popular:true},
+  {id:"netflix",em:"📺",name:"Netflix Standard",cat:"social",period:"1 месяц",price:390,old:799,desc:"Full HD, 2 экрана. Личный профиль.",delivery:"🔑 Аккаунт",popular:false},
+  {id:"discord",em:"💜",name:"Discord Nitro",cat:"social",period:"1 месяц",price:290,old:599,desc:"Кастомный тег + бусты + анимации. Ключ активации.",delivery:"🗝 Ключ",popular:false},
+  {id:"canva",em:"🎨",name:"Canva Pro",cat:"social",period:"1 месяц",price:290,old:599,desc:"100M элементов + AI инструменты + background remover.",delivery:"🔑 Аккаунт",popular:false},
+];
+
+const PAY_METHODS = [
+  {id:"card",icon:"💳",name:"Карта / СБП",desc:"Visa · MIR · Сбербанк · Тинькофф"},
+  {id:"crypto",icon:"₿",name:"Криптовалюта",desc:"USDT · BTC · TON — анонимно"},
+  {id:"stars",icon:"⭐",name:"Telegram Stars",desc:"Встроенная оплата в Telegram"},
+  {id:"balance",icon:"💰",name:"Баланс в боте",desc:"Используйте накопленный баланс"},
+];
+
+let cart = [];
+let selectedPay = "card";
+let activeCat = "all";
+let searchQ = "";
+
+// ── RENDER NAV CATS ──────────────────────────────────────────────────────
+function renderNavCats() {
+  const c = document.getElementById("navCats");
+  c.innerHTML = `<button class="nc active" onclick="filterCat('all',this)">Все</button>` +
+    Object.entries(CATS).map(([id,cat]) =>
+      `<button class="nc" onclick="filterCat('${id}',this)">${cat.name}</button>`
+    ).join("");
+}
+
+function filterCat(id, el) {
+  activeCat = id;
+  document.querySelectorAll(".nc").forEach(n => n.classList.remove("active"));
+  el.classList.add("active");
+  renderCatalog();
+}
+
+function filterProducts() {
+  searchQ = document.getElementById("searchInput").value.toLowerCase();
+  renderCatalog();
+}
+
+// ── RENDER CATALOG ─────────────────────────────────────────────────────────
+function renderCatalog() {
+  const wrap = document.getElementById("catalogWrap");
+  const filtered = PRODUCTS.filter(p => {
+    const matchCat = activeCat === "all" || p.cat === activeCat;
+    const matchQ = !searchQ || p.name.toLowerCase().includes(searchQ) || p.desc.toLowerCase().includes(searchQ);
+    return matchCat && matchQ;
+  });
+
+  if (filtered.length === 0) {
+    wrap.innerHTML = `<div style="text-align:center;padding:60px;color:var(--text2)">Ничего не найдено 😔</div>`;
+    return;
+  }
+
+  if (activeCat === "all" && !searchQ) {
+    // Группируем по категориям
+    let html = "";
+    Object.entries(CATS).forEach(([catId, cat]) => {
+      const catItems = filtered.filter(p => p.cat === catId);
+      if (!catItems.length) return;
+      html += `<div class="cat-title">${cat.name}</div>`;
+      html += `<div class="products-grid">${catItems.map(productCard).join("")}</div>`;
+    });
+    wrap.innerHTML = html;
+  } else {
+    wrap.innerHTML = `<div class="products-grid">${filtered.map(productCard).join("")}</div>`;
+  }
+}
+
+function productCard(p) {
+  const discount = p.old ? Math.round((1 - p.price / p.old) * 100) : 0;
+  const inCart = cart.some(c => c.id === p.id);
+  return `
+    <div class="product-card" onclick="openProdModal('${p.id}')">
+      ${p.popular ? `<div class="stock-badge in-stock">⭐ Хит</div>` : ''}
+      <div class="prod-top">
+        <div class="prod-emoji">${p.em}</div>
+      </div>
+      <div class="prod-name">${p.name}</div>
+      <div class="prod-period">${p.period}</div>
+      <div class="prod-desc">${p.desc}</div>
+      <div class="prod-footer">
+        <div class="prod-price-wrap">
+          ${p.old ? `<div class="prod-old">${p.old}₽</div>` : ""}
+          <div class="prod-price">${p.price}₽</div>
+          ${discount ? `<div class="prod-discount">−${discount}%</div>` : ""}
+        </div>
+        <button class="add-btn ${inCart ? "added" : ""}"
+          onclick="event.stopPropagation();addToCart('${p.id}')">
+          ${inCart ? "✓ В корзине" : "В корзину"}
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+// ── CART ──────────────────────────────────────────────────────────────────
+function addToCart(id) {
+  const p = PRODUCTS.find(x => x.id === id);
+  if (!p) return;
+  if (!cart.some(c => c.id === id)) {
+    cart.push(p);
+    updateCartCount();
+    renderCatalog();
+    showToast(`✅ ${p.name} добавлен в корзину`);
+  } else {
+    showToast(`Товар уже в корзине`);
+  }
+}
+
+function removeFromCart(id) {
+  cart = cart.filter(c => c.id !== id);
+  updateCartCount();
+  renderCart();
+  renderCatalog();
+}
+
+function updateCartCount() {
+  const el = document.getElementById("cartCount");
+  el.textContent = cart.length;
+  el.classList.toggle("show", cart.length > 0);
+  document.getElementById("checkoutBtn").disabled = cart.length === 0;
+  const total = cart.reduce((s,p) => s + p.price, 0);
+  document.getElementById("cartTotal").textContent = total + "₽";
+}
+
+function renderCart() {
+  const el = document.getElementById("cartItems");
+  if (!cart.length) {
+    el.innerHTML = `<div class="cart-empty"><div class="cart-empty-icon">🛒</div><div>Корзина пуста</div><div style="font-size:12px;margin-top:6px;color:var(--text3)">Добавьте товары из каталога</div></div>`;
+    return;
+  }
+  const total = cart.reduce((s,p) => s + p.price, 0);
+  el.innerHTML = cart.map(p => `
+    <div class="cart-item">
+      <div class="ci-emoji">${p.em}</div>
+      <div class="ci-info">
+        <div class="ci-name">${p.name}</div>
+        <div class="ci-period">${p.period}</div>
+      </div>
+      <div class="ci-price">${p.price}₽</div>
+      <button class="ci-remove" onclick="removeFromCart('${p.id}')">✕</button>
+    </div>
+  `).join("");
+  document.getElementById("cartTotal").textContent = total + "₽";
+}
+
+function openCart() {
+  renderCart();
+  document.getElementById("cartOverlay").classList.add("open");
+}
+
+function closeCart() {
+  document.getElementById("cartOverlay").classList.remove("open");
+}
+
+function handleCartClick(e) {
+  if (e.target === document.getElementById("cartOverlay")) closeCart();
+}
+
+// ── PRODUCT MODAL ────────────────────────────────────────────────────────
+function openProdModal(id) {
+  const p = PRODUCTS.find(x => x.id === id);
+  if (!p) return;
+  const discount = p.old ? Math.round((1 - p.price / p.old) * 100) : 0;
+  const inCart = cart.some(c => c.id === id);
+
+  document.getElementById("prodModalContent").innerHTML = `
+    <div class="prod-modal-body">
+      <div class="prod-modal-header">
+        <div class="pm-emoji">${p.em}</div>
+        <div class="pm-details">
+          <div class="pm-title">${p.name}</div>
+          <div class="pm-period">${p.period}</div>
+          <div class="pm-prices">
+            <div class="pm-new-price">${p.price}₽</div>
+            ${p.old ? `<div class="pm-old-price">${p.old}₽</div>` : ""}
+            ${discount ? `<div class="pm-save">−${discount}%</div>` : ""}
+          </div>
+        </div>
+      </div>
+      <div class="pm-desc-full">${p.desc}</div>
+      <div class="delivery-badge">${p.delivery} · до 30 минут</div>
+      <div class="pm-actions">
+        <button class="pm-cart-btn" onclick="${inCart ? "openCart();closeProdModal()" : "addToCart('"+id+"');closeProdModal()"}">${inCart ? "🛒 Перейти в корзину" : "🛒 В корзину"}</button>
+        <button class="pm-buy-btn" onclick="buyNow('${id}')">⚡ Купить сразу</button>
+      </div>
+    </div>
+  `;
+  document.getElementById("prodModal").classList.add("open");
+}
+
+function closeProdModal() {
+  document.getElementById("prodModal").classList.remove("open");
+}
+
+function closeProdModalOutside(e) {
+  if (e.target === document.getElementById("prodModal")) closeProdModal();
+}
+
+function buyNow(id) {
+  const p = PRODUCTS.find(x => x.id === id);
+  if (!p) return;
+  closeProdModal();
+  cart = [p];
+  updateCartCount();
+  openPayModal();
+}
+
+// ── PAY MODAL ─────────────────────────────────────────────────────────────
+function renderPayMethods() {
+  const el = document.getElementById("payMethods");
+  el.innerHTML = PAY_METHODS.map(m => `
+    <div class="pay-method ${selectedPay === m.id ? "selected" : ""}" onclick="selectPay('${m.id}')">
+      <div class="pm-icon">${m.icon}</div>
+      <div style="flex:1">
+        <div class="pm-name">${m.name}</div>
+        <div class="pm-desc">${m.desc}</div>
+      </div>
+      <div class="pm-radio"></div>
+    </div>
+  `).join("");
+}
+
+function selectPay(id) {
+  selectedPay = id;
+  renderPayMethods();
+}
+
+function openPayModal() {
+  const total = cart.reduce((s,p) => s + p.price, 0);
+  document.getElementById("payTotal").textContent = total + "₽";
+  renderPayMethods();
+  closeCart();
+  document.getElementById("payModal").classList.add("open");
+}
+
+function closePayModal() {
+  document.getElementById("payModal").classList.remove("open");
+}
+
+function closePayModalOutside(e) {
+  if (e.target === document.getElementById("payModal")) closePayModal();
+}
+
+function handlePay() {
+  const total = cart.reduce((s,p) => s + p.price, 0);
+  closePayModal();
+  const msgs = {
+    card: `💳 Переходим к оплате ${total}₽ через ЮKassa...`,
+    crypto: `₿ Открываем крипто-кошелёк...`,
+    stars: `⭐ Открываем Telegram для оплаты Stars...`,
+    balance: `💰 Списываем ${total}₽ с баланса...`,
+  };
+  showToast(msgs[selectedPay] || "⏳ Обработка...");
+  setTimeout(() => {
+    showToast("🎉 Оплата прошла! Товар отправлен в Telegram-бот.");
+    cart = [];
+    updateCartCount();
+    renderCatalog();
+  }, 2000);
+}
+
+// ── HELPERS ───────────────────────────────────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById("toast");
+  document.getElementById("toastMsg").textContent = msg;
+  t.classList.add("show");
+  setTimeout(() => t.classList.remove("show"), 3000);
+}
+
+function openTG() {
+  window.open("https://t.me/DigiShopBot", "_blank");
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────
+renderNavCats();
+renderCatalog();
+</script>
+</body>
+</html>
